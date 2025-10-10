@@ -1,4 +1,4 @@
-name: 'بث مباشر إلى RTMP'
+name: "بث مباشر إلى RTMP"
 
 on:
   workflow_dispatch:
@@ -8,12 +8,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 'إعداد FFmpeg'
-        uses: FedericoCarboni/setup-ffmpeg@v3
-
-      - name: 'بدء البث'
+      - name: "تثبيت FFmpeg من apt"
         run: |
-          ffmpeg -re -fflags +igndts -i 'https://mo3ad.xyz:443/mo3ad511/mo3ad511/498.m3u8' \
-          -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
-          -c:a aac -ar 44100 -ab 128k -f flv \
-          'rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44'
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: "بدء البث إلى RTMP"
+        run: |
+          echo "بدء البث..."
+          for i in {1..3}; do
+            echo "المحاولة رقم $i"
+            ffmpeg -re -fflags +igndts+genpts \
+              -rtbufsize 100M -timeout 5000000 \
+              -i "https://mo3ad.xyz:443/mo3ad511/mo3ad511/498.m3u8" \
+              -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
+              -c:a aac -ar 44100 -b:a 128k \
+              -f flv "rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44" \
+              -loglevel error && break || echo "فشل البث، إعادة المحاولة خلال 10 ثواني..." && sleep 10
+          done
+          echo "انتهى البث أو تم الوصول للحد الأقصى من المحاولات"
