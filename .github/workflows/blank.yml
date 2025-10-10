@@ -13,6 +13,7 @@ jobs:
 
       - name: 'بدء البث'
         run: |
-          ffmpeg -re -i 'https://mo3ad.xyz:443/mo3ad511/mo3ad511/498.m3u8' \
-          -c:v copy -c:a aac -ar 44100 -ab 128k -f flv \
+          ffmpeg -re -fflags +igndts -i 'https://mo3ad.xyz:443/mo3ad511/mo3ad511/498.m3u8' \
+          -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
+          -c:a aac -ar 44100 -ab 128k -f flv \
           'rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44'
