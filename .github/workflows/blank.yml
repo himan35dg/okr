@@ -22,7 +22,7 @@ jobs:
               -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
               -headers "Origin: https://mo3ad.xyz\r\nReferer: https://mo3ad.xyz/\r\nAccept: */*\r\n" \
               -fflags +igndts+genpts -rtbufsize 100M -timeout 5000000 \
-              -i "https://mo3ad.xyz:443/mo3ad511/mo3ad511/498.m3u8" \
+              -i "https://mo3ad.xyz:443/mo3ad626/mo3ad626/498.m3u8" \
               -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
               -c:a aac -ar 44100 -b:a 128k \
               -f flv "rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44" \
