@@ -30,7 +30,7 @@ jobs:
               -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
               -headers "Origin: https://mo3ad.xyz\r\nReferer: https://mo3ad.xyz/\r\nAccept: */*\r\n" \
               -fflags +igndts+genpts -rtbufsize 100M -timeout 5000000 \
-              -i "https://mo3ad.xyz:443/mo3ad626/mo3ad626/612" \
+              -i "https://cdn.footballii.ir:443/hls2/bein1.m3u8" \
               -i logo.png \
               -filter_complex "[0:v][1:v]overlay=x=main_w-overlay_w-53:y=30:format=auto" \
               -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
