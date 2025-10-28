@@ -6,6 +6,7 @@ on:
 jobs:
   stream:
     runs-on: ubuntu-latest
+    timeout-minutes: 360 # يوقف بعد 6 ساعات
 
     steps:
       - name: "تثبيت FFmpeg من apt"
@@ -13,19 +14,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
-      - name: "بدء البث إلى RTMP"
+      - name: "تحميل الشعار"
         run: |
-          echo "بدء البث..."
-          for i in {1..3}; do
-            echo "المحاولة رقم $i"
+          echo "جاري تحميل الشعار..."
+          wget -O logo.png "https://i.ibb.co/V0YXGvHM/image-2-modified.png"
+          echo "تم تحميل الشعار بنجاح."
+
+      - name: "بدء البث إلى RTMP مع الشعار"
+        run: |
+          echo "بدء البث لمدة تصل إلى 6 ساعات..."
+          end_time=$((SECONDS + 21600)) # 6 ساعات = 21600 ثانية
+          while [ $SECONDS -lt $end_time ]; do
+            echo "بدء محاولة بث جديدة في $(date)"
             ffmpeg -re \
               -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
               -headers "Origin: https://mo3ad.xyz\r\nReferer: https://mo3ad.xyz/\r\nAccept: */*\r\n" \
               -fflags +igndts+genpts -rtbufsize 100M -timeout 5000000 \
               -i "https://mo3ad.xyz:443/mo3ad626/mo3ad626/498.m3u8" \
+              -i logo.png \
+              -filter_complex "[0:v][1:v]overlay=x=main_w-overlay_w-53:y=30:format=auto" \
               -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
               -c:a aac -ar 44100 -b:a 128k \
               -f flv "rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44" \
-              -loglevel error && break || echo "فشل البث، إعادة المحاولة خلال 10 ثواني..." && sleep 10
+              -loglevel error
+
+            echo "تم انتهاء البث أو حدث خطأ. إعادة المحاولة بعد 10 ثواني..."
+            sleep 10
           done
-          echo "انتهى البث أو تم الوصول للحد الأقصى من المحاولات"
+          echo "تم الوصول لمدة 6 ساعات – انتهاء البث التلقائي."
