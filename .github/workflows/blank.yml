@@ -8,8 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # استخدم prebuilt FFmpeg image لتوفير الوقت
-      - name: استخدم Docker FFmpeg جاهز
+      - name: تشغيل بث RTMP باستخدام FFmpeg في Docker
         uses: addnab/docker-run-action@v3
         with:
           image: jrottenberg/ffmpeg:6.0-ubuntu
@@ -17,10 +16,6 @@ jobs:
           run: |
             INPUT="https://ab.footballii.ir/hls2/bein1_src.m3u8"
             OUTPUT="rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44"
-
-            # تثبيت Fontconfig والخطوط مرة واحدة
-            apt-get update
-            apt-get install -y fontconfig fonts-dejavu-core
 
             while true; do
               echo "==============================="
@@ -32,12 +27,10 @@ jobs:
                 -fflags +genpts -rtbufsize 100M -timeout 5000000 \
                 -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
                 -i "$INPUT" \
-                -filter_complex "[0:v]fps=30,scale=1280:720, \
-                  drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='حمل تطبيقنا من':fontcolor=white@0.6:fontsize=22:shadowcolor=black@0.4:shadowx=2:shadowy=2:x=15:y=main_h-80, \
-                  drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7esentv.com':fontcolor=white:fontsize=26:borderw=2:bordercolor=black:x=15:y=main_h-50[v_out]" \
+                -filter_complex "[0:v]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7esentv.com':fontcolor=white@0.3:fontsize=26:borderw=0:x=15:y=main_h-50[v_out]" \
                 -map "[v_out]" -map 0:a \
-                -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
-                -c:a aac -b:a 128k -ar 44100 \
+                -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p \
+                -c:a aac -b:a 192k -ar 44100 \
                 -f flv "$OUTPUT" \
                 -loglevel error \
                 -hide_banner \
