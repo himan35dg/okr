@@ -38,9 +38,9 @@ jobs:
               -i "$INPUT" \
               -loop 1 -i "$LOGO" \
               -filter_complex "[0:v]fps=30,scale=1280:720[main_scaled]; \
-                               [1:v]scale=iw/4:ih/4[logo_scaled]; \
+                               [1:v]scale=iw/6:ih/6[logo_scaled]; \
                                [main_scaled][logo_scaled]overlay=x=10:y=main_h-overlay_h-10[v_with_logo]; \
-                               [v_with_logo]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='نزل نطبيقنا 7esentv.com':fontcolor=yellow@0.9:fontsize=28:x=15:y=main_h-80[v_out]" \
+                               [v_with_logo]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7eentv.com':fontcolor=yellow@0.9:fontsize=20:x=15:y=main_h-80[v_out]" \
               -map "[v_out]" -map 0:a \
               -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
               -c:a aac -b:a 128k -ar 44100 \
