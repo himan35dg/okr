@@ -10,7 +10,7 @@ jobs:
     steps:
       # استخدم prebuilt FFmpeg image لتوفير الوقت
       - name: استخدم Docker FFmpeg جاهز
-        uses: addnab/docker-run-action@v4
+        uses: addnab/docker-run-action@v3
         with:
           image: jrottenberg/ffmpeg:6.0-ubuntu
           options: --rm
