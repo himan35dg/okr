@@ -3,11 +3,16 @@ name: بث مباشر RTMP دائم
 on:
   workflow_dispatch:
 
+# أضف هذا الجزء لمنح صلاحية الإلغاء
+permissions:
+  actions: write
+
 jobs:
   live-stream:
     runs-on: ubuntu-latest
 
     steps:
+      # ... بقية الكود الخاص بك يبقى كما هو ...
       - name: تثبيت FFmpeg والخطوط
         run: |
           sudo apt-get update
