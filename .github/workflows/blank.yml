@@ -6,8 +6,10 @@ on:
 jobs:
   live-stream:
     runs-on: ubuntu-latest
+
     container:
-      image: jrottenberg/ffmpeg:6.0-ubuntu
+      image: jrottenberg/ffmpeg:6.0-ubuntu  # Docker image فيه FFmpeg جاهز
+
     steps:
       - name: بدء البث المستمر
         run: |
@@ -21,15 +23,10 @@ jobs:
 
             ffmpeg -re \
               -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
-              -headers "Origin: https://mo3ad.xyz\r\nReferer: https://mo3ad.xyz/\r\nAccept: */*\r\n" \
               -fflags +genpts -rtbufsize 100M -timeout 5000000 \
               -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
               -i "$INPUT" \
-              -filter_complex "[0:v]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7esentv.com':fontcolor=white:fontsize=26:x=15:y=15[v_out]" \
-              -map "[v_out]" -map 0:a \
-              -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
-              -c:a aac -b:a 128k -ar 44100 \
-              -f flv "$OUTPUT" \
+              -c:v copy -c:a copy -f flv "$OUTPUT" \
               -loglevel error \
               -hide_banner \
               -stats
