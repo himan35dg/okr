@@ -38,8 +38,8 @@ jobs:
               -loop 1 -i "$LOGO" \
               -filter_complex "[0:v]fps=30,scale=1280:720[main_scaled]; \
                                [1:v]scale=iw/4:ih/4[logo_scaled]; \
-                               [main_scaled][logo_scaled]overlay=x=940:y=620:format=auto[v_with_logo]; \
-                               [v_with_logo]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='نزل نطبيقنا 7esentv.com':fontcolor=white@0.8:fontsize=28:x=945:y=590[v_out]" \
+                               [main_scaled][logo_scaled]overlay=x=10:y=main_h-overlay_h-10:format=auto[v_with_logo]; \
+                               [v_with_logo]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='نزل نطبيقنا 7esentv.com':fontcolor=yellow@0.9:fontsize=28:x=15:y=main_h-overlay_h-35[v_out]" \
               -map "[v_out]" -map 0:a \
               -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
               -c:a aac -b:a 128k -ar 44100 \
