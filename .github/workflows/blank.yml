@@ -7,10 +7,12 @@ jobs:
   live-stream:
     runs-on: ubuntu-latest
 
-    container:
-      image: jrottenberg/ffmpeg:6.0-ubuntu  # Docker image فيه FFmpeg جاهز
-
     steps:
+      - name: تثبيت FFmpeg والخطوط
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu
+
       - name: بدء البث المستمر
         run: |
           INPUT="https://ab.footballii.ir/hls2/bein1_src.m3u8"
