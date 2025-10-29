@@ -1,40 +1,64 @@
-- name: بدء البث المستمر
-  run: |
-    INPUT="https://ab.footballii.ir/hls2/bein1_src.m3u8"
-    OUTPUT="rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44"
-    LOGO="logo.png"
+name: بث مباشر RTMP دائم
 
-    while true; do
-      echo "==============================="
-      echo "بدء محاولة بث جديدة في $(date -u)"
-      echo "==============================="
+on:
+  workflow_dispatch:
 
-      if [ ! -f "$LOGO" ]; then
-        echo "خطأ: الشعار غير موجود! محاولة إعادة التحميل..."
-        wget -O "$LOGO" "https://i.ibb.co/V0YXGvHM/image-2-modified.png"
-        if [ ! -f "$LOGO" ]; then
-          echo "فشل تحميل الشعار، إعادة المحاولة بعد 15 ثانية..."
-          sleep 15
-          continue
-        fi
-      fi
+jobs:
+  live-stream:
+    runs-on: ubuntu-latest
 
-      ffmpeg -re \
-        -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
-        -headers "Origin: https://mo3ad.xyz\r\nReferer: https://mo3ad.xyz/\r\nAccept: */*\r\n" \
-        -fflags +genpts+igndts -rtbufsize 150M -timeout 10000000 \
-        -i "$INPUT" \
-        -loop 1 -i "$LOGO" \
-        -filter_complex "[0:v]fps=30,scale=1280:720:out_range=tv,format=yuv420p[main_scaled]; \
-                         [1:v]scale=iw/5:ih/5[logo_scaled]; \
-                         [main_scaled][logo_scaled]overlay=x=main_w-overlay_w-30:y=main_h-overlay_h-30:format=auto[v_with_logo]; \
-                         [v_with_logo]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='نزل نطبيقنا 7esentv.com':fontcolor=white@0.85:fontsize=30:x=main_w-overlay_w-30:y=main_h-overlay_h-70[v_out]" \
-        -map "[v_out]" -map 0:a? \
-        -c:v libx264 -preset veryfast -tune zerolatency -profile:v high -level 3.1 -pix_fmt yuv420p \
-        -b:v 4000k -maxrate 4500k -bufsize 8000k -g 60 \
-        -c:a aac -b:a 160k -ar 44100 -ac 2 \
-        -f flv "$OUTPUT" \
-        -loglevel error || echo "حدث خطأ أثناء البث، إعادة المحاولة بعد 10 ثواني..."
+    steps:
+      - name: تثبيت FFmpeg و wget
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg wget
 
-      sleep 10
-    done
+      - name: تحميل الشعار
+        run: |
+          LOGO="logo.png"
+          URL="https://i.ibb.co/V0YXGvHM/image-2-modified.png"
+          if [ ! -f "$LOGO" ]; then
+            echo "تحميل الشعار..."
+            wget -O "$LOGO" "$URL"
+          fi
+
+      - name: بدء البث المستمر
+        run: |
+          INPUT="https://ab.footballii.ir/hls2/bein1_src.m3u8"
+          OUTPUT="rtmp://vsu.okcdn.ru/input/10237855538790_8860754578022_h5fia4qh44"
+          LOGO="logo.png"
+
+          while true; do
+            echo "==============================="
+            echo "بدء محاولة بث جديدة في $(date -u)"
+            echo "==============================="
+
+            if [ ! -f "$LOGO" ]; then
+              echo "خطأ: الشعار غير موجود! محاولة إعادة التحميل..."
+              wget -O "$LOGO" "https://i.ibb.co/V0YXGvHM/image-2-modified.png"
+              if [ ! -f "$LOGO" ]; then
+                echo "فشل تحميل الشعار، إعادة المحاولة بعد 15 ثانية..."
+                sleep 15
+                continue
+              fi
+            fi
+
+            ffmpeg -re \
+              -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+              -headers "Origin: https://mo3ad.xyz\r\nReferer: https://mo3ad.xyz/\r\nAccept: */*\r\n" \
+              -fflags +genpts+igndts -rtbufsize 150M -timeout 10000000 \
+              -i "$INPUT" \
+              -loop 1 -i "$LOGO" \
+              -filter_complex "[0:v]fps=30,scale=1280:720:out_range=tv,format=yuv420p[main_scaled]; \
+                               [1:v]scale=iw/5:ih/5[logo_scaled]; \
+                               [main_scaled][logo_scaled]overlay=x=main_w-overlay_w-30:y=main_h-overlay_h-30:format=auto[v_with_logo]; \
+                               [v_with_logo]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='نزل نطبيقنا 7esentv.com':fontcolor=white@0.85:fontsize=30:x=main_w-overlay_w-30:y=main_h-overlay_h-70[v_out]" \
+              -map "[v_out]" -map 0:a? \
+              -c:v libx264 -preset veryfast -tune zerolatency -profile:v high -level 3.1 -pix_fmt yuv420p \
+              -b:v 4000k -maxrate 4500k -bufsize 8000k -g 60 \
+              -c:a aac -b:a 160k -ar 44100 -ac 2 \
+              -f flv "$OUTPUT" \
+              -loglevel error || echo "حدث خطأ أثناء البث، إعادة المحاولة بعد 10 ثواني..."
+
+            sleep 10
+          done
