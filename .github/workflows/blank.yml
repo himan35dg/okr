@@ -10,7 +10,6 @@ jobs:
 live-stream:
 runs-on: ubuntu-latest
 
-```
 steps:
   - name: تثبيت FFmpeg والخطوط
     run: |
