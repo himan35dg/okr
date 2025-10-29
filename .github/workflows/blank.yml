@@ -6,13 +6,10 @@ on:
 jobs:
   live-stream:
     runs-on: ubuntu-latest
+    container:
+      image: jrottenberg/ffmpeg:6.0-ubuntu
 
     steps:
-      - name: تثبيت FFmpeg والخطوط
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg fonts-dejavu
-
       - name: بدء البث المستمر
         run: |
           INPUT="https://ab.footballii.ir/hls2/bein1_src.m3u8"
@@ -24,17 +21,13 @@ jobs:
             echo "==============================="
 
             ffmpeg -re \
-              -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
-              -fflags +genpts -rtbufsize 100M -timeout 5000000 \
-              -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
               -i "$INPUT" \
-              -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='حمل تطبيقنا من 7esentv.com':fontcolor=white@0.8:fontsize=26:borderw=2:bordercolor=black:x=15:y=main_h-50" \
+              -filter_complex "[0:v]drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='حمل تطبيقنا من 7esentv.com':fontcolor=white:fontsize=26:borderw=2:bordercolor=black:x=15:y=main_h-50[v_out]" \
+              -map "[v_out]" -map 0:a \
               -c:v libx264 -preset veryfast -tune zerolatency -pix_fmt yuv420p \
               -c:a aac -b:a 128k -ar 44100 \
               -f flv "$OUTPUT" \
-              -loglevel error \
-              -hide_banner \
-              -stats
+              -loglevel error -hide_banner -stats
 
             echo "حدث خطأ أو انتهى البث، إعادة المحاولة بعد 10 ثواني..."
             sleep 10
