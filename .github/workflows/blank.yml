@@ -16,29 +16,57 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg fonts-dejavu
 
-      - name: بدء البث المستمر
-        run: |
-          INPUT="http://ugeen.live:8080/live/Ugeen_VIPdHi95o/eoKGvj/3221.ts"
-          OUTPUT="rtmp://vsu.okcdn.ru/input/9585026080287_8946523310623_kilm7b4gee"
+- name: بدء البث المستمر
+  run: |
+    INPUT="http://ugeen.live:8080/live/Ugeen_VIPdHi95o/eoKGvj/3221.ts"
+    OUTPUT="rtmp://vsu.okcdn.ru/input/9585026080287_8946523310623_kilm7b4gee"
 
-          while true; do
-            echo "==============================="
-            echo "بدء محاولة بث جديدة في $(date -u)"
-            echo "==============================="
+    while true; do
+      echo "==============================="
+      echo "بدء محاولة بث جديدة في $(date -u)"
+      echo "==============================="
 
-            ffmpeg -re \
-              -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
-              -fflags +genpts -rtbufsize 100M -timeout 5000000 \
-              -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
-              -i "$INPUT" \
-              -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7esentv.com':fontcolor=white@0.6:fontsize=26:borderw=0:x=15:y=main_h-50" \
-              -c:v libx264 -preset veryfast -b:v 3000k \
-              -c:a aac -b:a 128k -ar 44100 \
-              -f flv "$OUTPUT" \
-              -loglevel error \
-              -hide_banner \
-              -stats
+      ffmpeg -re \
+        -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+        -fflags +genpts -rtbufsize 100M -timeout 5000000 \
+        -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
+        -i "$INPUT" \
+        -vf "scale=1920:1080,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7esentv.com':fontcolor=white@0.6:fontsize=26:borderw=0:x=15:y=main_h-50" \
+        -c:v libx264 -preset veryfast -b:v 6000k -r 60 \
+        -c:a aac -b:a 128k -ar 44100 \
+        -f flv "$OUTPUT" \
+        -loglevel error \
+        -hide_banner \
+        -stats
 
-            echo "حدث خطأ أو انتهى البث، إعادة المحاولة بعد 10 ثواني..."
-            sleep 10
-          done
+      echo "حدث خطأ أو انتهى البث، إعادة المحاولة بعد 10 ثواني..."
+      sleep 10
+    done
+- name: بدء البث المستمر
+  run: |
+    INPUT="http://ugeen.live:8080/live/Ugeen_VIPdHi95o/eoKGvj/3221.ts"
+    OUTPUT="rtmp://vsu.okcdn.ru/input/9585026080287_8946523310623_kilm7b4gee"
+
+    while true; do
+      echo "==============================="
+      echo "بدء محاولة بث جديدة في $(date -u)"
+      echo "==============================="
+
+      ffmpeg -re \
+        -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+        -fflags +genpts -rtbufsize 100M -timeout 5000000 \
+        -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 \
+        -i "$INPUT" \
+        -vf "scale=1920:1080,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='7esentv.com':fontcolor=white@0.6:fontsize=26:borderw=0:x=15:y=main_h-50" \
+        -c:v libx264 -preset veryfast -b:v 6000k -r 60 \
+        -c:a aac -b:a 128k -ar 44100 \
+        -f flv "$OUTPUT" \
+        -loglevel error \
+        -hide_banner \
+        -stats
+
+      echo "حدث خطأ أو انتهى البث، إعادة المحاولة بعد 10 ثواني..."
+      sleep 10
+    done
+
+
