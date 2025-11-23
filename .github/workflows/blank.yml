@@ -19,7 +19,7 @@ jobs:
       - name: بدء البث المستمر بجودة عالية
         run: |
           # إعداد المتغيرات
-          INPUT="http://ugeen.live:8080/live/Ugeen_VIPdHi95o/eoKGvj/450"
+          INPUT="http://ugeen.live:8080/live/Ugeen_VIPdHi95o/eoKGvj/450.ts"
           OUTPUT="rtmp://vsu.okcdn.ru/input/10380930129510_9050461506150_z22okuxcwu"
           
           # إعدادات الجودة
