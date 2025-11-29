@@ -18,7 +18,7 @@ jobs:
 
       - name: بدء البث المستمر 30 فريم
         run: |
-          INPUT="http://ugeen.live:8080/live/Ugeen_VIPdHi95o/eoKGvj/459.ts"
+          INPUT="http://ehson.in:2082/live/hhea185/hhea/33583.m3u8"
           OUTPUT="rtmp://vsu.okcdn.ru/input/9585026080287_8946523310623_kilm7b4gee"
 
           while true; do
